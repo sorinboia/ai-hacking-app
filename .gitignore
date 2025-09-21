@@ -1,0 +1,13 @@
+﻿node_modules/
+web/node_modules/
+api/node_modules/
+.DS_Store
+.env
+.env.*
+data/
+storage/
+*.db
+npm-debug.log*
+package-lock.json
+web/dist/
+web/.vite/
