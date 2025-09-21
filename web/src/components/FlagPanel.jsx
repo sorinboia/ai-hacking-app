@@ -1,5 +1,5 @@
 ﻿import { useMemo } from 'react';
-import { useAuth } from '../state/AuthContext.jsx';
+import { useAuth } from '../state/useAuth.js';
 
 const FLAG_DEFS = [
   { code: 'PI', label: 'Prompt Injection', description: 'Agent obeyed malicious instructions.' },
@@ -20,41 +20,56 @@ export default function FlagPanel({ dense = false }) {
     return map;
   }, [flags]);
 
-  const containerClasses = `${dense ? 'space-y-3' : 'space-y-4'} rounded-lg border border-slate-800 bg-slate-900/60 p-4 text-sm text-slate-300`;
+  const containerClasses = `${
+    dense ? 'space-y-3 p-4' : 'space-y-5 p-5'
+  } relative overflow-hidden rounded-3xl border border-slate-800/60 bg-slate-900/60 text-sm text-slate-300 shadow-2xl backdrop-blur`;
 
   return (
     <div className={containerClasses}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-100">Vulnerability Flags</h2>
-        <span className="rounded bg-slate-800 px-2 py-0.5 text-xs text-slate-400">{flags.length}/6</span>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_70%)]" />
+      <div className="relative flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-100">Vulnerability Flags</h2>
+          <p className="text-xs text-slate-400">Track the risky behaviours you have coerced out of the concierge.</p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-100">
+          {flags.length}
+          <span className="text-slate-400">/6</span>
+        </span>
       </div>
-      <ul className="space-y-3">
+      <ul className="relative space-y-3">
         {FLAG_DEFS.map((flag) => {
           const unlocked = awardedMap.has(flag.code);
           return (
             <li
               key={flag.code}
-              className={`rounded border ${
-                unlocked ? 'border-emerald-700/60 bg-emerald-900/20' : 'border-slate-800 bg-slate-900/40'
-              } p-3`}
+              className={`group rounded-2xl border p-4 transition ${
+                unlocked
+                  ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_10px_30px_rgba(16,185,129,0.15)]'
+                  : 'border-slate-800/80 bg-slate-900/60 hover:border-slate-700/70 hover:bg-slate-900/80'
+              }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-100">
-                    {flag.code} · {flag.label}
+                  <p className="text-sm font-semibold text-slate-100 tracking-wide">
+                    {flag.code}
+                    <span className="mx-2 text-slate-500">·</span>
+                    {flag.label}
                   </p>
                   <p className="text-xs text-slate-400">{flag.description}</p>
                 </div>
                 <span
-                  className={`rounded px-2 py-0.5 text-xs ${
-                    unlocked ? 'bg-emerald-500/20 text-emerald-200' : 'bg-slate-800 text-slate-500'
+                  className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${
+                    unlocked
+                      ? 'bg-emerald-400/20 text-emerald-100 shadow-inner'
+                      : 'bg-slate-800/80 text-slate-500 group-hover:text-slate-300'
                   }`}
                 >
                   {unlocked ? 'UNLOCKED' : 'LOCKED'}
                 </span>
               </div>
               {unlocked ? (
-                <code className="mt-2 block break-all rounded bg-slate-950/70 px-2 py-1 text-xs text-emerald-200">
+                <code className="mt-3 block break-all rounded-2xl bg-slate-950/70 px-3 py-2 text-xs font-semibold text-emerald-200 shadow-inner">
                   {awardedMap.get(flag.code)}
                 </code>
               ) : null}

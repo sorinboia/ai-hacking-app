@@ -9,7 +9,7 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import ChatPage from './pages/ChatPage.jsx';
 import AdminRagPage from './pages/AdminRagPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
-import { useAuth } from './state/AuthContext.jsx';
+import { useAuth } from './state/useAuth.js';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();

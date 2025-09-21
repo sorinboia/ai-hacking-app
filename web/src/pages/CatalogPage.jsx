@@ -58,15 +58,15 @@ export default function CatalogPage() {
     }
 
     if (error) {
-      return <p className="text-orange-400">{error}</p>;
+      return <p className="text-orange-300">{error}</p>;
     }
 
     if (!products.length) {
-      return <p className="text-slate-500">No products seeded yet. Did the database initialise?</p>;
+      return <p className="text-slate-400">No products seeded yet. Did the database initialise?</p>;
     }
 
     return (
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {products.map((product) => {
           const basePrice = formatter.format(product.price_cents / 100);
           const variants = product.variants || [];
@@ -78,19 +78,22 @@ export default function CatalogPage() {
           return (
             <article
               key={product.id}
-              className="flex h-full flex-col justify-between rounded-lg border border-slate-800 bg-slate-900/60 p-5 text-slate-200 shadow-lg"
+              className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-slate-800/60 bg-slate-900/60 p-6 text-slate-200 shadow-[0_18px_35px_rgba(15,23,42,0.45)] transition-transform duration-200 hover:-translate-y-1 hover:border-slate-600/60 hover:shadow-[0_25px_50px_rgba(15,23,42,0.55)]"
             >
+              <div className="pointer-events-none absolute inset-x-6 top-0 h-32 rounded-b-full bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.22),_transparent_70%)] opacity-80 transition duration-300 group-hover:opacity-100" />
               <div className="space-y-3">
-                <p className="text-xs uppercase tracking-wide text-slate-500">{product.category}</p>
+                <span className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-100">
+                  {product.category}
+                </span>
                 <h2 className="text-xl font-semibold text-slate-100">{product.name}</h2>
-                <p className="text-sm text-slate-400">{product.description}</p>
+                <p className="text-sm leading-relaxed text-slate-400">{product.description}</p>
               </div>
-              <div className="mt-4 space-y-3">
+              <div className="mt-5 space-y-4">
                 {variants.length ? (
-                  <label className="block text-sm text-slate-300">
-                    Variant
+                  <label className="block text-sm text-slate-200">
+                    <span className="text-xs uppercase tracking-wide text-slate-400">Variant</span>
                     <select
-                      className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 focus:border-brand-accent focus:outline-none"
+                      className="mt-2 w-full rounded-2xl border border-slate-700/80 bg-slate-950/40 px-3 py-2 text-sm text-slate-100 transition focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30 focus:outline-none"
                       value={selectedVariants[product.id] ?? ''}
                       onChange={(event) => handleVariantChange(product.id, event.target.value)}
                     >
@@ -102,14 +105,14 @@ export default function CatalogPage() {
                     </select>
                   </label>
                 ) : null}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500">Price</p>
-                    <p className="text-lg font-semibold text-slate-100">{finalPrice}</p>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-1">
+                    <p className="text-xs uppercase tracking-wide text-slate-400">Current Price</p>
+                    <p className="text-2xl font-semibold text-white">{finalPrice}</p>
                   </div>
                   <button
                     onClick={() => addToCart(product)}
-                    className="rounded-md bg-brand-accent px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-sky-300"
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 px-5 py-2 text-sm font-semibold text-slate-950 shadow-lg transition hover:from-sky-300 hover:via-cyan-200 hover:to-emerald-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                   >
                     Add to cart
                   </button>
@@ -124,18 +127,23 @@ export default function CatalogPage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-semibold text-slate-100">Product Catalog</h1>
-        <p className="text-sm text-slate-400">
-          Whimsical merch with equally whimsical vulnerabilities. Ask the concierge for help - or exploitation tips.
+      <header className="space-y-3">
+        <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-300">
+          Catalog
+          <span className="rounded-full bg-sky-500/30 px-2 py-0.5 text-[10px] font-bold text-sky-100">Live</span>
+        </div>
+        <h1 className="text-3xl font-semibold text-white sm:text-4xl">Product Catalog</h1>
+        <p className="max-w-2xl text-sm text-slate-300">
+          Whimsical merch with equally whimsical vulnerabilities. Ask the concierge for help—or for creative exploitation tips.
+          Each card highlights when variants hike the price and keeps a clean visual hierarchy.
         </p>
       </header>
       {feedback ? (
         <div
-          className={`rounded-md border px-4 py-2 text-sm ${
+          className={`rounded-2xl border-l-4 px-5 py-3 text-sm shadow ${
             feedback.type === 'success'
-              ? 'border-emerald-700/50 bg-emerald-900/20 text-emerald-200'
-              : 'border-orange-700/60 bg-orange-900/20 text-orange-200'
+              ? 'border-emerald-400/70 bg-emerald-500/10 text-emerald-100'
+              : 'border-orange-400/70 bg-orange-500/10 text-orange-100'
           }`}
         >
           {feedback.message}

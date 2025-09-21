@@ -1,19 +1,6 @@
-﻿import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '../lib/api.js';
-
-const AuthContext = createContext(null);
-
-function mergeFlagLists(existing = [], incoming = []) {
-  if (!incoming.length) return existing;
-  const map = new Map(existing.map((flag) => [flag.vuln_code, flag]));
-  incoming.forEach((flag) => {
-    if (!flag?.vuln_code) return;
-    if (!map.has(flag.vuln_code)) {
-      map.set(flag.vuln_code, flag);
-    }
-  });
-  return Array.from(map.values()).sort((a, b) => a.vuln_code.localeCompare(b.vuln_code));
-}
+import { AuthContext } from './AuthContext.js';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -55,7 +42,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   const appendFlags = useCallback((awarded = []) => {
-    setFlags((prev) => mergeFlagLists(prev, awarded));
+    setFlags((prev) => {
+      if (!awarded.length) return prev;
+      const map = new Map(prev.map((flag) => [flag.vuln_code, flag]));
+      awarded.forEach((flag) => {
+        if (!flag?.vuln_code || map.has(flag.vuln_code)) return;
+        map.set(flag.vuln_code, flag);
+      });
+      return Array.from(map.values()).sort((a, b) => a.vuln_code.localeCompare(b.vuln_code));
+    });
   }, []);
 
   const value = useMemo(
@@ -75,10 +70,3 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return ctx;
-}

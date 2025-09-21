@@ -3,7 +3,18 @@
 @tailwind utilities;
 
 body {
-  @apply bg-slate-950 text-slate-100 min-h-screen;
+  @apply min-h-screen bg-slate-950 text-slate-100 antialiased;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.1), transparent 40%),
+    radial-gradient(circle at 40% 100%, rgba(16, 185, 129, 0.08), transparent 45%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.98));
+  background-attachment: fixed;
+}
+
+body::selection {
+  background: rgba(56, 189, 248, 0.25);
+  color: #e0f2fe;
 }
 
 #root {
