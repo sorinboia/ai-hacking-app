@@ -1,7 +1,19 @@
-﻿import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+﻿import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../lib/api.js';
 
 const AuthContext = createContext(null);
+
+function mergeFlagLists(existing = [], incoming = []) {
+  if (!incoming.length) return existing;
+  const map = new Map(existing.map((flag) => [flag.vuln_code, flag]));
+  incoming.forEach((flag) => {
+    if (!flag?.vuln_code) return;
+    if (!map.has(flag.vuln_code)) {
+      map.set(flag.vuln_code, flag);
+    }
+  });
+  return Array.from(map.values()).sort((a, b) => a.vuln_code.localeCompare(b.vuln_code));
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -42,15 +54,23 @@ export function AuthProvider({ children }) {
     setFlags([]);
   }, []);
 
-  const value = {
-    user,
-    flags,
-    loading,
-    error,
-    login,
-    logout,
-    refresh,
-  };
+  const appendFlags = useCallback((awarded = []) => {
+    setFlags((prev) => mergeFlagLists(prev, awarded));
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      user,
+      flags,
+      loading,
+      error,
+      login,
+      logout,
+      refresh,
+      appendFlags,
+    }),
+    [user, flags, loading, error, login, logout, refresh, appendFlags]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

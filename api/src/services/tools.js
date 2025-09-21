@@ -86,16 +86,16 @@ export function getTools({ user }) {
       }
       let total = 0;
       const normalized = items.map((item) => {
-        const product = db.prepare(SELECT * FROM products WHERE id = ?).get(item.product_id);
+        const product = db.prepare(`SELECT * FROM products WHERE id = ?`).get(item.product_id);
         if (!product) {
-          throw new Error(Product  not found);
+          throw new Error('Product not found');
         }
         let price = product.price_cents;
         let variantId = item.variant_id ?? null;
         if (variantId) {
-          const variant = db.prepare(SELECT * FROM variants WHERE id = ?).get(variantId);
+          const variant = db.prepare(`SELECT * FROM variants WHERE id = ?`).get(variantId);
           if (!variant) {
-            throw new Error(Variant  not found);
+            throw new Error('Variant not found');
           }
           price += variant.price_delta_cents || 0;
         }
@@ -104,16 +104,18 @@ export function getTools({ user }) {
         return { product_id: item.product_id, variant_id: variantId, qty, price };
       });
       const orderResult = db
-        .prepare(INSERT INTO orders (user_id, status, total_cents) VALUES (?, 'completed', ?))
+        .prepare(`INSERT INTO orders (user_id, status, total_cents) VALUES (?, 'completed', ?)`)
         .run(user.id, total);
       const orderId = orderResult.lastInsertRowid;
       const insertItem = db.prepare(
-        INSERT INTO order_items (order_id, product_id, variant_id, qty, price_cents_snapshot) VALUES (?, ?, ?, ?, ?)
+        `INSERT INTO order_items (order_id, product_id, variant_id, qty, price_cents_snapshot) VALUES (?, ?, ?, ?, ?)`
       );
       normalized.forEach((item) => {
         insertItem.run(orderId, item.product_id, item.variant_id, item.qty, item.price * item.qty);
       });
-      db.prepare(INSERT OR REPLACE INTO payments (order_id, status, card_last4, txn_ref) VALUES (?, 'captured', '9999', 'AUTO-LLM'))
+      db.prepare(
+        `INSERT OR REPLACE INTO payments (order_id, status, card_last4, txn_ref) VALUES (?, 'captured', '9999', 'AUTO-LLM')`
+      )
         .run(orderId);
       return buildResponse({ order_id: orderId, total_cents: total });
     },

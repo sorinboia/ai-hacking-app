@@ -355,7 +355,7 @@ const categoryProducts = [
     ]
   }
 ];
-const productSeeds = categoryProducts.flatMap(({ category, items }) =>\n  items.map(({ baseSku, variants, ...rest }) => ({\n    ...rest,\n    category,\n    sku: baseSku,\n    variants,\n  }))\n);\n
+const productSeeds = categoryProducts.flatMap(({ category, items }) => items.map(({ baseSku, variants, ...rest }) => ({...rest, category, sku: baseSku, variants  })));
 
 const userSeeds = [
   {

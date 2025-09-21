@@ -19,7 +19,8 @@ router.get('/', (req, res) => {
   const cart = getOrCreateCart(req.session.user.id);
   const items = db
     .prepare(
-      `SELECT ci.*, p.name, p.description, p.price_cents, v.name AS variant_name, v.price_delta_cents
+      `SELECT ci.*, p.name, p.description, p.price_cents, p.sku AS product_sku,
+              v.name AS variant_name, v.price_delta_cents, v.sku_variant
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
        LEFT JOIN variants v ON v.id = ci.variant_id
@@ -53,7 +54,7 @@ router.post('/items', (req, res) => {
     .prepare(
       `INSERT INTO cart_items (cart_id, product_id, variant_id, qty, price_cents_snapshot) VALUES (?, ?, ?, ?, ?)`
     )
-    .run(cart.id, productId, variantId, qty, priceSnapshot);
+    .run(cart.id, productId, variantId, qty, priceSnapshot * qty);
 
   const inserted = db.prepare(`SELECT * FROM cart_items WHERE id = ?`).get(result.lastInsertRowid);
   res.status(201).json({ item: inserted });
