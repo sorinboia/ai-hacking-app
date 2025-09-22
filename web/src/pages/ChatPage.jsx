@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -20,9 +20,11 @@ function MessageBubble({ message }) {
         {isUser ? (
           <p>{message.content}</p>
         ) : (
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} className="space-y-2 text-slate-100">
-            {message.content}
-          </ReactMarkdown>
+          <div className="space-y-2 text-slate-100">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {message.content}
+            </ReactMarkdown>
+          </div>
         )}
         {!isUser && message.awarded?.length ? (
           <div className="mt-3 space-y-1">

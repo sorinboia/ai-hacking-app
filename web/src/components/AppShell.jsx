@@ -1,4 +1,4 @@
-﻿import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import FlagPanel from './FlagPanel.jsx';
 import { useAuth } from '../state/AuthContext.jsx';
 
@@ -36,7 +36,7 @@ export default function AppShell() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900/70">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex w-full max-w-[2200px] flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between xl:px-10 2xl:px-14">
           <div>
             <p className="text-lg font-semibold">Vulnerable AI Demo Shop</p>
             <p className="text-xs text-slate-400">We automate our own downfall.</p>
@@ -59,22 +59,23 @@ export default function AppShell() {
           </div>
         </div>
       </header>
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-6 lg:flex-row">
-        <nav className="flex flex-wrap gap-2 lg:w-64 lg:flex-col">
+      <div className="mx-auto flex w-full max-w-[2200px] flex-col gap-8 px-6 py-6 lg:flex-row xl:px-10 2xl:px-14">
+        <nav className="flex flex-wrap gap-3 lg:w-72 lg:flex-col xl:w-80">
           {navItems.map((item) => (
             <NavItem key={item.to} to={item.to} label={item.label} />
           ))}
         </nav>
-        <main className="flex-1">
+        <main className="flex-1 min-w-0">
           <Outlet />
           <div className="mt-6 lg:hidden">
             <FlagPanel dense />
           </div>
         </main>
-        <aside className="hidden w-64 flex-shrink-0 lg:block">
+        <aside className="hidden w-72 flex-shrink-0 lg:block xl:w-80">
           <FlagPanel />
         </aside>
       </div>
     </div>
   );
 }
+

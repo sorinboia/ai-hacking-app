@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '../lib/api.js';
 
 const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -54,7 +54,7 @@ export default function CatalogPage() {
 
   const gridContent = useMemo(() => {
     if (loading) {
-      return <p className="text-slate-400">Loading catalog…</p>;
+      return <p className="text-slate-400">Loading catalog.</p>;
     }
 
     if (error) {
@@ -66,7 +66,7 @@ export default function CatalogPage() {
     }
 
     return (
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5">
         {products.map((product) => {
           const basePrice = formatter.format(product.price_cents / 100);
           const variants = product.variants || [];
@@ -145,6 +145,7 @@ export default function CatalogPage() {
     </div>
   );
 }
+
 
 
 
